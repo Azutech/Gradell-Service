@@ -4,29 +4,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './users.controller';
 import { User, userSchema } from './entities/user.entity';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot(),  // Ensure this is included
     MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
-    ClientsModule.registerAsync([
-      {
-        name: 'USER_SERVICE',
-        imports: [ConfigModule],
-        useFactory: async (configService: ConfigService) => ({
-          transport: Transport.RMQ,
-          options: {
-            urls: [configService.get<string>('RABBITMQ_URL')],
-            queue: 'user_queue',
-            queueOptions: {
-              durable: false,
-            },
-          },
-        }),
-        inject: [ConfigService],
-      },
-    ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRATION_DATE'),  // Token will expire in 3 days
+        },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [UsersController],
   providers: [UsersService],
