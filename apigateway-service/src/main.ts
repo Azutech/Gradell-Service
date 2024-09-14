@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// import { HttpLogger } from './middleware/http-logger.middleware';
+import { HttpLogger, AllExceptionsFilter } from './middleware';
 
 async function bootstrap() {
   const logger = new Logger('MAIN');
@@ -13,9 +13,9 @@ async function bootstrap() {
   const port = configService.get<string>('PORT');
 
   app.setGlobalPrefix('/api/v1');
-  app.enableCors();
 
-  // app.use(new HttpLogger().use);
+  app.use(new HttpLogger().use);
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(port, () => logger.log(`App running on Port: ${port}`));
 }
