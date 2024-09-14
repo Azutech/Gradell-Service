@@ -1,4 +1,10 @@
-import { ConflictException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity';
@@ -12,7 +18,7 @@ import { JwtService } from '@nestjs/jwt';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -52,18 +58,24 @@ export class UsersService {
       throw new UnauthorizedException('Wrong Password');
     }
 
-    return user
-  
+    const userObject = user.toObject();
+
+    // Remove the password from the response object
+    delete userObject.password;
+
+    return userObject;
   }
-
-
 
   async generateToken(user: User): Promise<string> {
-    const payload = { id: user._id, email: user.email };
+    const payload = {
+      id: user._id, // user._id or user.id (depending on how your user schema is set)
+      email: user.email,
+      name: user.name, // Ensure that these fields exist on the user object
+      phoneNumber: user.phoneNumber,
+      status: user.status,
+    };
     return this.jwtService.sign(payload);
   }
-  
-
 
   findAll() {
     return `This action returns all users`;

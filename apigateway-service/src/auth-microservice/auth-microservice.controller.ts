@@ -1,4 +1,4 @@
-import { Controller, Body, Post, HttpException, HttpStatus, Req, UseGuards, Get } from '@nestjs/common';
+import { Controller, Body, HttpCode, Post, HttpException, HttpStatus, Req, UseGuards, Get } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
@@ -10,6 +10,7 @@ export class AuthMicroserviceController {
   constructor(private readonly httpService: HttpService) {}
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: any) {
     try {
       const result = await lastValueFrom(
@@ -40,7 +41,7 @@ export class AuthMicroserviceController {
 
 
   @Post ('login')
-
+  @HttpCode(HttpStatus.OK)
   async login (@Body() createUserDto: any) {
     try {
       const result = await lastValueFrom(
@@ -71,6 +72,7 @@ export class AuthMicroserviceController {
 
 
   @Get('me')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req) {
     try {
