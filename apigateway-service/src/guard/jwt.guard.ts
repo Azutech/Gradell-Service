@@ -17,24 +17,28 @@ export class JwtAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) {
-      throw new UnauthorizedException();
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('No token provided');
     }
+
+    const token = authHeader.split(' ')[1];
     try {
-      const payload: object = await this.jwtService.verifyAsync(token, {
-        secret: <string>this.configService.get('JWT_SECRET'),
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
       });
 
-      request['user'] = payload;
-    } catch {
-      throw new UnauthorizedException();
-    }
-    return true;
-  }
+      // Validate the payload structure
+      if (!payload || typeof payload !== 'object' || !('id' in payload)) {
+        throw new UnauthorizedException('Invalid token payload');
+      }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+      request['user'] = payload;
+      return true;
+    } catch (error) {
+      console.error('JWT verification failed:', error);
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 }

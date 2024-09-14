@@ -1,7 +1,9 @@
-import { Controller, Body, Post, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Body, Post, HttpException, HttpStatus, Req, UseGuards, Get } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { JwtAuthGuard } from 'src/guard/jwt.guard';
+
 
 @Controller('user')
 export class AuthMicroserviceController {
@@ -18,7 +20,7 @@ export class AuthMicroserviceController {
               throw new HttpException(error.response.data, error.response.status);
             } else {
               // If there's no response (e.g., network error), throw a generic error
-              throw new HttpException('Failed to register user', HttpStatus.INTERNAL_SERVER_ERROR);
+              throw new HttpException('Failed Request', HttpStatus.INTERNAL_SERVER_ERROR);
             }
           }),
         ),
@@ -66,4 +68,34 @@ export class AuthMicroserviceController {
       }
     }
   }
+
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async dashboard(@Req() req) {
+    try {
+      console.log("wrong")
+      const result = await lastValueFrom(
+        this.httpService.get(`http://localhost:4041/api/v1/auth?id=${req.user.id}`).pipe(
+          catchError((error: AxiosError) => {
+            if (error.response) {
+              throw new HttpException(error.response.data, error.response.status);
+            } else {
+              throw new HttpException('Failed to fetch user data', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+          }),
+        ),
+      );
+      return result.data;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new HttpException('Unknown error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+
+
 }

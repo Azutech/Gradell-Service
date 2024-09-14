@@ -49,27 +49,34 @@ export class UsersService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Wrong Password');
     }
 
-    return user.email
+    return user
   
   }
 
 
 
-  generateToken (user : User ) {
-    const payload = { sub: user.id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  async generateToken(user: User): Promise<string> {
+    const payload = { id: user._id, email: user.email };
+    return this.jwtService.sign(payload);
   }
+  
+
+
   findAll() {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<User> {
+    const user = await this.userModel.findOne({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
