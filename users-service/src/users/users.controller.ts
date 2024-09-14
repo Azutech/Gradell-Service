@@ -8,7 +8,7 @@ import {
   Query,
   NotFoundException,
 } from '@nestjs/common';
-import { Ctx, MessagePattern, Payload } from '@nestjs/microservices';
+import { Payload } from '@nestjs/microservices';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';

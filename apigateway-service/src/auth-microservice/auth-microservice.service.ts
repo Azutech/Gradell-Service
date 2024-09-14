@@ -1,4 +1,4 @@
-import { Injectable, Inject, HttpException} from '@nestjs/common';
+import { Injectable, Inject, HttpException } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/createUser';
@@ -10,29 +10,26 @@ export class AuthMicroserviceService {
 
   private readonly ISE: string = 'Internal server error';
 
-
   connection(): Observable<any> {
-
     return this.clientAuthService
-      .send({ cmd: "CONNECTION_CHECK" }, {})
+      .send({ cmd: 'CONNECTION_CHECK' }, {})
       .pipe(map((message: string) => message));
   }
-  createUser(createUserDto: CreateUserDto)  : Observable<any>  {
+  createUser(createUserDto: CreateUserDto): Observable<any> {
     try {
       // console.log('Sending create_user message with DTO:', createUserDto);
-        return this.clientAuthService.send<any>(
-          {cmd: 'create_user'},
-          createUserDto,
-        );
+      return this.clientAuthService.send<any>(
+        { cmd: 'create_user' },
+        createUserDto,
+      );
 
-        // return createUserDto
-      } catch (err: any) {
-
-        console.log(err)
-        throw new HttpException(
-            err?.message ? err.message : this.ISE,
-            err?.status ? err.status : 500,
-        );
-      }
+      // return createUserDto
+    } catch (err: any) {
+      console.log(err);
+      throw new HttpException(
+        err?.message ? err.message : this.ISE,
+        err?.status ? err.status : 500,
+      );
+    }
   }
 }

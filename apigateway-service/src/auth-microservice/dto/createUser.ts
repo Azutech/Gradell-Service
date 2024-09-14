@@ -25,7 +25,6 @@
 //   password: string;
 // }
 
-
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
@@ -41,4 +40,3 @@ export class CreateUserDto {
   @IsNotEmpty()
   phoneNumber: string;
 }
-
