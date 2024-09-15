@@ -7,7 +7,7 @@ This is a  Merch Stores with the dopest Tops, built with Microservices using RES
 To install the project, follow these steps:
 
 -  Clone the repository: `git clone https://github.com/Azutech/Gradell-Service.git`
--  Change to the project directory: `cd each project service`
+-  Change to the project directory: `cd to each services`
 -  Install the dependencies: `npm install`
 -  Run the project: `npm run start: dev`
 
