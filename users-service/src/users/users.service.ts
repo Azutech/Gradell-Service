@@ -2,6 +2,7 @@ import {
   ConflictException,
   HttpException,
   Injectable,
+  HttpStatus,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -36,6 +37,10 @@ export class UsersService {
       phoneNumber,
       password: hashedPassword,
     });
+
+    if (!createdUser) {
+      throw new HttpException("Products can not created", HttpStatus.BAD_REQUEST)
+    }
     return createdUser.save();
   }
 
