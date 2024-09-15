@@ -106,14 +106,14 @@ import {
         }
       }
     }
-    @Get('cancelOrder')
+    @Put('cancelOrder')
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
     async allProducts(@Req() req, @Query('orderId') orderId: string) {
       try {
         const result = await lastValueFrom(
           this.httpService
-            .get(`http://localhost:4043/api/v1/orders/cancelOrder?orderId=${orderId}`)
+            .put(`http://localhost:4043/api/v1/orders/cancelOrder?orderId=${orderId}`)
             .pipe(
               catchError((error: AxiosError) => {
                 if (error.response) {
@@ -149,15 +149,14 @@ import {
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
     async updateProducts(
-      @Body() createUserDto: any,
-      @Query('productId') productId: string,
+      @Query('orderId') orderId: string,
     ) {
       try {
         const result = await lastValueFrom(
           this.httpService
             .put(
-              `http://localhost:4042/api/v1/products/updateProduct?id=${productId}`,
-              createUserDto,
+              `http://localhost:4043/api/v1/orders/shipOrder?id=${orderId}`,
+              
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -190,15 +189,15 @@ import {
         }
       }
     }
-    @Delete('deleteProduct')
+    @Get('allShippedOrders')
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
-    async deleteProduct(@Req() req, @Query('productId') productId: string) {
+    async deleteProduct(@Req() req,) {
       try {
         const result = await lastValueFrom(
           this.httpService
-            .delete(
-              `http://localhost:4042/api/v1/products/delete?id=${productId}`,
+            .get(
+              `http://localhost:4043/api/v1/orders/allShippedOrders`,
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -231,5 +230,212 @@ import {
         }
       }
     }
+    @Get('allCancelledOrder')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async allCancelledOrder(@Req() req,) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .get(
+              `http://localhost:4043/api/v1/orders/allCancelledOrder`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Product deleted Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+    @Get('CancelledOrderForUser')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async CancelledOrderForUser(@Req() req,) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .get(
+              `http://localhost:4043/api/v1/orders/CancelledOrderForUser?=${req.user.id}`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Product deleted Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+    @Get('ShippedOrderForUser')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async ShippedOrderForUser(@Req() req,) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .get(
+              `http://localhost:4043/api/v1/orders/ShippedOrderForUser?=${req.user.id}`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Product deleted Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+    @Get('deleteOrder')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async deleteOrder(@Req() req, @Query('orderId') orderId: string) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .delete(
+              `http://localhost:4043/api/v1/orders/deleteOrder?=${orderId}`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Product deleted Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+    @Get('deleteOrder')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async updateOrder(@Req() req, @Query('orderId') orderId: string) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .get(
+              `http://localhost:4043/api/v1/orders/updateOrder?=${orderId}`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Product deleted Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+
+    
   }
-  
+    
