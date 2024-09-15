@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -18,20 +19,22 @@ export class OrdersController {
 
   // Create an order with multiple products
   @Post('create')
-  async createOrder(@Body() createOrderDto: CreateOrderDto, @Query("id") id: string) {
+  async createOrder(
+    @Body() createOrderDto: CreateOrderDto,
+    @Query('id') id: string,
+  ) {
     try {
-      const user   = await this.ordersService.getUser(id);
+      const user = await this.ordersService.getUser(id);
 
       // Add userId to createOrderDto
       const orderDtoWithUserId = { ...createOrderDto, userId: id };
-  
+
       // Create order with updated DTO
       const result = await this.ordersService.create(orderDtoWithUserId);
-  
+
       return {
-        
         message: 'Order created successfully',
-        user : user.email,
+        user: user.email,
         result,
         statusCode: HttpStatus.CREATED,
       };
@@ -126,18 +129,35 @@ export class OrdersController {
   }
 
   @Delete('deleteOrder')
-async deleteOrder (@Query('orderId') orderId: string)  {
-try {
-  const removeOrder = await this.ordersService.deleteOrder(orderId)
-  return {
-    message: 'Order deleted returned successfully',
-    removeOrder,
-  };
-} catch (error) {
-  throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-}
-}
-  
+  async deleteOrder(@Query('orderId') orderId: string) {
+    try {
+      const removeOrder = await this.ordersService.deleteOrder(orderId);
+      return {
+        message: 'Order deleted returned successfully',
+        removeOrder,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
-
+  @Put('updateOrder')
+  async editOrder(
+    @Body() updateOrderDto: UpdateOrderDto,
+    @Query('orderId') orderId: string,
+  ) {
+    try {
+      const updatedOrder = await this.ordersService.update(
+        orderId,
+        updateOrderDto,
+      );
+      return {
+        message: 'Order updated successfully',
+        updatedOrder,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

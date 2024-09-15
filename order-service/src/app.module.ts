@@ -17,7 +17,9 @@ import { OrdersModule } from './orders/orders.module';
         uri: configService.get<string>('MONGO_URI'), // Get MongoDB URI from environment variables
       }),
       inject: [ConfigService], // Inject ConfigService into the factory function
-    }),OrdersModule],
+    }),
+    OrdersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

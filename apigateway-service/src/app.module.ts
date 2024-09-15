@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMicroserviceModule } from './auth-microservice/auth-microservice.module';
 import { ProductsServiceModule } from './product-microservice/product-microservice.module';
+import { OrderServiceModule } from './Order-microservice/order-microservice.module';
+
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { ProductsServiceModule } from './product-microservice/product-microservi
     }),
     AuthMicroserviceModule,
     ProductsServiceModule,
+    OrderServiceModule
+    
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,7 +4,3 @@ export enum Status {
   DELIVERED = 'Delivered',
   CANCELLED = 'Cancelled',
 }
-
-
-
-

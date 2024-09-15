@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { ProductsServiceController } from './product-microservice.controller';
+import { OrderServiceController } from './order-microservice.controller'
 import { HttpModule } from '@nestjs/axios'; // Import HttpModule
 
 @Module({
@@ -15,6 +15,6 @@ import { HttpModule } from '@nestjs/axios'; // Import HttpModule
       inject: [ConfigService],
     }),
   ],
-  controllers: [ProductsServiceController],
+  controllers: [OrderServiceController],
 })
-export class ProductsServiceModule {}
+export class OrderServiceModule {}
