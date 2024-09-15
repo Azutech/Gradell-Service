@@ -9,6 +9,7 @@ import {
   UseGuards,
   Get,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
@@ -16,15 +17,20 @@ import { JwtAuthGuard } from 'src/guard/jwt.guard';
 
 @Controller('user')
 export class AuthMicroserviceController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService, // Inject ConfigService
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: any) {
+    const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
+
     try {
       const result = await lastValueFrom(
         this.httpService
-          .post('http://localhost:4041/api/v1/auth/register', createUserDto)
+          .post(`${authServiceUrl}/auth/register`, createUserDto)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -62,10 +68,12 @@ export class AuthMicroserviceController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() createUserDto: any) {
+    const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
+
     try {
       const result = await lastValueFrom(
         this.httpService
-          .post('http://localhost:4041/api/v1/auth/login', createUserDto)
+          .post(`${authServiceUrl}/auth/login`, createUserDto)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -105,25 +113,24 @@ export class AuthMicroserviceController {
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req) {
     try {
-      console.log('wrong');
+      const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
+
       const result = await lastValueFrom(
-        this.httpService
-          .get(`http://localhost:4041/api/v1/auth?id=${req.user.id}`)
-          .pipe(
-            catchError((error: AxiosError) => {
-              if (error.response) {
-                throw new HttpException(
-                  error.response.data,
-                  error.response.status,
-                );
-              } else {
-                throw new HttpException(
-                  'Failed to fetch user data',
-                  HttpStatus.INTERNAL_SERVER_ERROR,
-                );
-              }
-            }),
-          ),
+        this.httpService.get(`${authServiceUrl}/auth?id=${req.user.id}`).pipe(
+          catchError((error: AxiosError) => {
+            if (error.response) {
+              throw new HttpException(
+                error.response.data,
+                error.response.status,
+              );
+            } else {
+              throw new HttpException(
+                'Failed to fetch user data',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }
+          }),
+        ),
       );
       return {
         messsage: 'DashBoard retrieved',

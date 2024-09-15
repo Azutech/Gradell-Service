@@ -14,7 +14,6 @@ import { HttpModule } from '@nestjs/axios'; // Import HttpModule
       }),
       inject: [ConfigService],
     }),
-  
   ],
   controllers: [AuthMicroserviceController],
   providers: [],

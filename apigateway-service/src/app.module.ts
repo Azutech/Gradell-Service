@@ -6,7 +6,6 @@ import { AuthMicroserviceModule } from './auth-microservice/auth-microservice.mo
 import { ProductsServiceModule } from './product-microservice/product-microservice.module';
 import { OrderServiceModule } from './Order-microservice/order-microservice.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,8 +15,7 @@ import { OrderServiceModule } from './Order-microservice/order-microservice.modu
     }),
     AuthMicroserviceModule,
     ProductsServiceModule,
-    OrderServiceModule
-    
+    OrderServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
