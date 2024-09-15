@@ -8,14 +8,14 @@ import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),  // Ensure this is included
+    ConfigModule.forRoot(), // Ensure this is included
     MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRATION_DATE'),  // Token will expire in 3 days
+          expiresIn: configService.get<string>('JWT_EXPIRATION_DATE'), // Token will expire in 3 days
         },
       }),
       inject: [ConfigService],

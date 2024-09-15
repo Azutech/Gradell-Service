@@ -1,4 +1,11 @@
-import { ConflictException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity';
@@ -12,7 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -30,6 +37,10 @@ export class UsersService {
       phoneNumber,
       password: hashedPassword,
     });
+
+    if (!createdUser) {
+      throw new HttpException("Products can not created", HttpStatus.BAD_REQUEST)
+    }
     return createdUser.save();
   }
 
@@ -49,27 +60,40 @@ export class UsersService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Wrong Password');
     }
 
-    return user.email
-  
+    const userObject = user.toObject();
+
+    // Remove the password from the response object
+    delete userObject.password;
+
+    return userObject;
   }
 
-
-
-  generateToken (user : User ) {
-    const payload = { sub: user.id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
+  async generateToken(user: User): Promise<string> {
+    const payload = {
+      id: user._id, // user._id or user.id (depending on how your user schema is set)
+      email: user.email,
+      name: user.name, // Ensure that these fields exist on the user object
+      phoneNumber: user.phoneNumber,
+      status: user.status,
     };
+    return this.jwtService.sign(payload);
   }
+
   findAll() {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<User> {
+    const user = await this.userModel.findOne({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

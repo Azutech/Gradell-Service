@@ -4,11 +4,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthMicroserviceService } from './auth-microservice.service';
 import { AuthMicroserviceController } from './auth-microservice.controller';
-import { HttpModule } from '@nestjs/axios';  // Import HttpModule
+import { HttpModule } from '@nestjs/axios'; // Import HttpModule
 
 @Module({
   imports: [
-    HttpModule,  // Add HttpModule here
+    HttpModule, // Add HttpModule here
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -23,7 +23,9 @@ import { HttpModule } from '@nestjs/axios';  // Import HttpModule
         useFactory: async (config: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
-            urls:  ['amqps://fwruvcta:TzXM69bOmQr02gmCL8p4MUMuPKf5r5xg@cow.rmq2.cloudamqp.com/fwruvcta'],
+            urls: [
+              'amqps://fwruvcta:TzXM69bOmQr02gmCL8p4MUMuPKf5r5xg@cow.rmq2.cloudamqp.com/fwruvcta',
+            ],
             queue: 'auth_microservice',
             queueOptions: {
               durable: true,

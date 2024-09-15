@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMicroserviceModule } from './auth-microservice/auth-microservice.module';
+import { ProductsServiceModule } from './product-microservice/product-microservice.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AuthMicroserviceModule } from './auth-microservice/auth-microservice.mo
       expandVariables: true,
     }),
     AuthMicroserviceModule,
+    ProductsServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
