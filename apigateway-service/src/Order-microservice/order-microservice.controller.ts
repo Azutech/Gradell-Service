@@ -17,7 +17,8 @@ import {
   import { AxiosError } from 'axios';
   import { JwtAuthGuard } from 'src/guard/jwt.guard';
   
-  @Controller('Order')
+  
+  @Controller('order')
   export class OrderServiceController {
     constructor(private readonly httpService: HttpService) {}
   
@@ -155,7 +156,7 @@ import {
         const result = await lastValueFrom(
           this.httpService
             .put(
-              `http://localhost:4043/api/v1/orders/shipOrder?id=${orderId}`,
+              `http://localhost:4043/api/v1/orders/shipOrder?orderId=${orderId}`,
               
             )
             .pipe(
@@ -271,15 +272,15 @@ import {
         }
       }
     }
-    @Get('CancelledOrderForUser')
+    @Get('allOrders')
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
-    async CancelledOrderForUser(@Req() req,) {
+    async allOrder(@Req() req,) {
       try {
         const result = await lastValueFrom(
           this.httpService
             .get(
-              `http://localhost:4043/api/v1/orders/CancelledOrderForUser?=${req.user.id}`,
+              `http://localhost:4043/api/v1/orders/allOrders`,
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -298,7 +299,48 @@ import {
             ),
         );
         return {
-          messsage: 'Product deleted Successfully',
+          messsage: 'Order returned Successfully',
+          data: result.data,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        } else {
+          throw new HttpException(
+            'Unknown error occurred',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+    }
+    @Get('CancelledOrderForUser')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    async CancelledOrderForUser(@Req() req,) {
+      try {
+        const result = await lastValueFrom(
+          this.httpService
+            .get(
+              `http://localhost:4043/api/v1/orders/CancelledOrderForUser?userId=${req.user.id}`,
+            )
+            .pipe(
+              catchError((error: AxiosError) => {
+                if (error.response) {
+                  throw new HttpException(
+                    error.response.data,
+                    error.response.status,
+                  );
+                } else {
+                  throw new HttpException(
+                    'Failed to fetch user data',
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                  );
+                }
+              }),
+            ),
+        );
+        return {
+          messsage: 'Order returned Successfully',
           data: result.data,
         };
       } catch (error) {
@@ -320,7 +362,7 @@ import {
         const result = await lastValueFrom(
           this.httpService
             .get(
-              `http://localhost:4043/api/v1/orders/ShippedOrderForUser?=${req.user.id}`,
+              `http://localhost:4043/api/v1/orders/ShippedOrderForUser?userId=${req.user.id}`,
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -353,7 +395,7 @@ import {
         }
       }
     }
-    @Get('deleteOrder')
+    @Delete('deleteOrder')
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
     async deleteOrder(@Req() req, @Query('orderId') orderId: string) {
@@ -361,7 +403,7 @@ import {
         const result = await lastValueFrom(
           this.httpService
             .delete(
-              `http://localhost:4043/api/v1/orders/deleteOrder?=${orderId}`,
+              `http://localhost:4043/api/v1/orders/deleteOrder?orderId=${orderId}`,
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -394,15 +436,16 @@ import {
         }
       }
     }
-    @Get('deleteOrder')
+    @Put('updateOrder')
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
-    async updateOrder(@Req() req, @Query('orderId') orderId: string) {
+    async updateOrder(@Body() updateOrderDto: any, @Req() req, @Query('orderId') orderId: string) {
       try {
         const result = await lastValueFrom(
           this.httpService
-            .get(
-              `http://localhost:4043/api/v1/orders/updateOrder?=${orderId}`,
+            .put(
+              `http://localhost:4043/api/v1/orders/updateOrder?orderId=${orderId}`,
+              updateOrderDto
             )
             .pipe(
               catchError((error: AxiosError) => {
@@ -421,7 +464,7 @@ import {
             ),
         );
         return {
-          messsage: 'Product deleted Successfully',
+          messsage: 'Order Updated Successfully',
           data: result.data,
         };
       } catch (error) {

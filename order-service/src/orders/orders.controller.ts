@@ -67,6 +67,18 @@ export class OrdersController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  @Get('allOrders')
+  async allOrder() {
+    try {
+      const result = await this.ordersService.allOrder();
+      return {
+        message: 'all Order  successfully',
+        result,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
   @Put('shipOrder')
   async shipOrder(@Query('orderId') orderId: string) {
     try {

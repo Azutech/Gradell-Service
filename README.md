@@ -34,14 +34,15 @@ To contribute to the project, you can:
 
 ## API Documentation
 
-APIs found at APIGate way service....
+APIs runs at APIGate way service....
 
+-  POST http://localhost:4040/api/v1/api/user/register: User Registeration
+-  POST http://localhost:4040/api/v1/api/user/login: User Login
 
-
-
+Click this [link](https://documenter.getpostman.com/view/19569197/2sAXqp83kh) to get the full API Documentation 
 ## License
 [MIT] ()
 The project is licensed under the MIT license.
 
-Copyright (c) [2023] [EmmanuelOnugha]
+Copyright (c) [2024] [EmmanuelOnugha]
  

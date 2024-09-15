@@ -17,7 +17,7 @@ export class User extends Document {
   phoneNumber: string;
 
   @Prop({
-    default: 'Inactive',
+    default: 'Active',
   })
   status: Status;
 }

@@ -212,9 +212,18 @@ export class OrdersService {
 
     return { message: 'Order successfully deleted' };
   }
+  async allOrder() {
+    const result = await this.orderModel.find({ }).exec();
+
+    if (result.length === 0) {
+      throw new NotFoundException('Order not found or already deleted');
+    }
+
+    return { message: 'Order successfully deleted', data: result };
+  }
 
   async update(orderId: string, updateOrderDto: UpdateOrderDto) {
-    const order = await this.orderModel.findById(orderId);
+    const order = await this.orderModel.findOne({_id: orderId});
 
     if (!order) {
       throw new NotFoundException('Order not found');
