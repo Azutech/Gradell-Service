@@ -16,18 +16,23 @@ async function bootstrap() {
 
   app.setGlobalPrefix('/api/v1');
 
+  const swaggerBaseUrl = configService.get<string>('SWAGGER_BASE_URL')
+
+
   const config = new DocumentBuilder()
   .setTitle('Auth Microservice API')
   .setDescription('API documentation for the Auth microservice')
   .setVersion('1.0')
   .addBearerAuth()  // If you're using JWT
+  .setExternalDoc('Deployed Swagger JSON', `${swaggerBaseUrl}/api-json`)
+
   .build();
 
 
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
-  
+
   app.use(new HttpLogger().use);
   app.useGlobalFilters(new AllExceptionsFilter());
 
