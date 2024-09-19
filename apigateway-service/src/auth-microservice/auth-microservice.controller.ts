@@ -14,6 +14,10 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
+import { ApiTags, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/createUser'; // Assuming you have DTOs
+
+
 
 @Controller('user')
 export class AuthMicroserviceController {
@@ -24,6 +28,9 @@ export class AuthMicroserviceController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'User successfully registered.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
   async register(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
