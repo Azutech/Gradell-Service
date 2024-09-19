@@ -15,10 +15,11 @@ import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
 import { ApiTags, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/createUser'; // Assuming you have DTOs
+import { CreateUserDto, LoginUserDto } from './dto/createUser'; // Assuming you have DTOs
 
 
 
+@ApiTags('Auth')
 @Controller('user')
 export class AuthMicroserviceController {
   constructor(
@@ -74,6 +75,8 @@ export class AuthMicroserviceController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginUserDto })
+ 
   async login(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
@@ -116,6 +119,7 @@ export class AuthMicroserviceController {
   }
 
   @Get('me')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req) {
