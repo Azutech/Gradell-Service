@@ -18,8 +18,10 @@ import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
+import { CreateOrderDto, UpdateOrderDto } from './dto/order.dto';
 
 @ApiTags('Orders')
+@ApiBearerAuth()
 @Controller('order')
 export class OrderServiceController {
   constructor(
@@ -28,6 +30,7 @@ export class OrderServiceController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: CreateOrderDto })
   @Post('createOrder')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: any, @Req() req) {
@@ -410,7 +413,7 @@ export class OrderServiceController {
     try {
       const result = await lastValueFrom(
         this.httpService
-          .delete(`${orderServiceUrl}orders/deleteOrder?orderId=${orderId}`)
+          .delete(`${orderServiceUrl}/orders/deleteOrder?orderId=${orderId}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -443,6 +446,7 @@ export class OrderServiceController {
     }
   }
   @Put('updateOrder')
+  @ApiBody({ type: UpdateOrderDto })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async updateOrder(

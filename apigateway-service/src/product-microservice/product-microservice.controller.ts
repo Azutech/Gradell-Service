@@ -21,6 +21,7 @@ import { JwtAuthGuard } from 'src/guard/jwt.guard';
 import { CreateProductDto } from './dto/products.dto';
 
 @ApiTags('Products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsServiceController {
   constructor(
@@ -31,7 +32,6 @@ export class ProductsServiceController {
   @UseGuards(JwtAuthGuard)
   @Post('createProduct')
   @ApiBody({ type: CreateProductDto })
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: any) {
     const productServiceUrl = this.configService.get<string>(
@@ -77,7 +77,6 @@ export class ProductsServiceController {
   }
 
   @Get('getProduct')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req, @Query('productId') productId: string) {
@@ -121,7 +120,6 @@ export class ProductsServiceController {
     }
   }
   @Get('allProducts')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async allProducts(@Req() req) {
@@ -163,7 +161,6 @@ export class ProductsServiceController {
     }
   }
   @Put('updateProduct')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async updateProducts(
@@ -213,7 +210,6 @@ export class ProductsServiceController {
     }
   }
   @Delete('deleteProduct')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async deleteProduct(@Req() req, @Query('productId') productId: string) {

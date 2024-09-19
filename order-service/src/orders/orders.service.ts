@@ -206,7 +206,7 @@ export class OrdersService {
   async deleteOrder(orderId: string) {
     const result = await this.orderModel.deleteOne({ _id: orderId }).exec();
 
-    if (result.deletedCount === 0) {
+    if (!result) {
       throw new NotFoundException('Order not found or already deleted');
     }
 

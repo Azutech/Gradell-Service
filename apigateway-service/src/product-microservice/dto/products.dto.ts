@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateProductDto {
   @ApiProperty({ description: 'Product name', example: 'Data Trap' })
+  name: string;
   @ApiProperty({ description: 'Product price', example: 6745 })
   price: number;
 
@@ -16,6 +17,7 @@ export class CreateProductDto {
 }
 export class UpdateProductDto {
   @ApiProperty({ description: 'Product name', example: 'Data Trap' })
+  name: string;
   @ApiProperty({ description: 'Product price', example: 6745 })
   price: number;
 
