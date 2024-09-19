@@ -3,7 +3,6 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { CreateProductDto } from './create-product.dto';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-    
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -19,5 +18,4 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
   @IsString()
   @IsNotEmpty()
   brand: string;
-
 }

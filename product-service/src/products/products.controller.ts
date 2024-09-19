@@ -72,7 +72,7 @@ export class ProductsController {
   @Put('updateProduct')
   async updateProduct(
     @Query('id') id: string,
-    @Body() updateProductDto: UpdateProductDto
+    @Body() updateProductDto: UpdateProductDto,
   ) {
     try {
       const result = await this.productsService.update(id, updateProductDto);
@@ -88,7 +88,6 @@ export class ProductsController {
       );
     }
   }
-  
 
   @Delete('delete')
   async delete(@Query('id') id: string) {

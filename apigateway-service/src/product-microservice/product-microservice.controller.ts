@@ -14,29 +14,34 @@ import {
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-
+import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
+import { CreateProductDto } from './dto/products.dto';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsServiceController {
-  constructor(private readonly httpService: HttpService,    private readonly configService: ConfigService, // Inject ConfigService
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService, // Inject ConfigService
   ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('createProduct')
+  @ApiBody({ type: CreateProductDto })
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: any) {
-    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL'); // Get the base URL from ConfigService
+    const productServiceUrl = this.configService.get<string>(
+      'PRODUCT_SERVICE_URL',
+    ); // Get the base URL from ConfigService
 
     try {
       const result = await lastValueFrom(
         this.httpService
-          .post(
-            `${productServiceUrl}/products/createProduct`,
-            createUserDto,
-          )
+          .post(`${productServiceUrl}/products/createProduct`, createUserDto)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -72,10 +77,13 @@ export class ProductsServiceController {
   }
 
   @Get('getProduct')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req, @Query('productId') productId: string) {
-    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL'); // Get the base URL from ConfigService
+    const productServiceUrl = this.configService.get<string>(
+      'PRODUCT_SERVICE_URL',
+    ); // Get the base URL from ConfigService
 
     try {
       const result = await lastValueFrom(
@@ -113,30 +121,31 @@ export class ProductsServiceController {
     }
   }
   @Get('allProducts')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async allProducts(@Req() req) {
-    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL'); // Get the base URL from ConfigService
+    const productServiceUrl = this.configService.get<string>(
+      'PRODUCT_SERVICE_URL',
+    ); // Get the base URL from ConfigService
 
     try {
       const result = await lastValueFrom(
-        this.httpService
-          .get(`${productServiceUrl}/products/allProducts`)
-          .pipe(
-            catchError((error: AxiosError) => {
-              if (error.response) {
-                throw new HttpException(
-                  error.response.data,
-                  error.response.status,
-                );
-              } else {
-                throw new HttpException(
-                  'Failed to fetch user data',
-                  HttpStatus.INTERNAL_SERVER_ERROR,
-                );
-              }
-            }),
-          ),
+        this.httpService.get(`${productServiceUrl}/products/allProducts`).pipe(
+          catchError((error: AxiosError) => {
+            if (error.response) {
+              throw new HttpException(
+                error.response.data,
+                error.response.status,
+              );
+            } else {
+              throw new HttpException(
+                'Failed to fetch user data',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }
+          }),
+        ),
       );
       return {
         messsage: 'All Product retrieved',
@@ -154,13 +163,16 @@ export class ProductsServiceController {
     }
   }
   @Put('updateProduct')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async updateProducts(
     @Body() createUserDto: any,
     @Query('productId') productId: string,
   ) {
-    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL'); // Get the base URL from ConfigService
+    const productServiceUrl = this.configService.get<string>(
+      'PRODUCT_SERVICE_URL',
+    ); // Get the base URL from ConfigService
 
     try {
       const result = await lastValueFrom(
@@ -201,17 +213,18 @@ export class ProductsServiceController {
     }
   }
   @Delete('deleteProduct')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async deleteProduct(@Req() req, @Query('productId') productId: string) {
-    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL'); // Get the base URL from ConfigService
+    const productServiceUrl = this.configService.get<string>(
+      'PRODUCT_SERVICE_URL',
+    ); // Get the base URL from ConfigService
 
     try {
       const result = await lastValueFrom(
         this.httpService
-          .delete(
-            `${productServiceUrl}/products/delete?id=${productId}`,
-          )
+          .delete(`${productServiceUrl}/products/delete?id=${productId}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {

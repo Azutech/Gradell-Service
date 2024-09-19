@@ -14,13 +14,18 @@ import {
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
 
+@ApiTags('Orders')
 @Controller('order')
 export class OrderServiceController {
-  constructor(private readonly httpService: HttpService, private readonly configService: ConfigService,) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('createOrder')
@@ -77,9 +82,7 @@ export class OrderServiceController {
     try {
       const result = await lastValueFrom(
         this.httpService
-          .get(
-            `${orderServiceUrl}/orders/userOrder?id=${req.user.id}`,
-          )
+          .get(`${orderServiceUrl}/orders/userOrder?id=${req.user.id}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -120,9 +123,7 @@ export class OrderServiceController {
     try {
       const result = await lastValueFrom(
         this.httpService
-          .put(
-            `${orderServiceUrl}/orders/cancelOrder?orderId=${orderId}`,
-          )
+          .put(`${orderServiceUrl}/orders/cancelOrder?orderId=${orderId}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -163,9 +164,7 @@ export class OrderServiceController {
     try {
       const result = await lastValueFrom(
         this.httpService
-          .put(
-            `${orderServiceUrl}/orders/shipOrder?orderId=${orderId}`,
-          )
+          .put(`${orderServiceUrl}/orders/shipOrder?orderId=${orderId}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
@@ -205,23 +204,21 @@ export class OrderServiceController {
 
     try {
       const result = await lastValueFrom(
-        this.httpService
-          .get(`${orderServiceUrl}/orders/allShippedOrders`)
-          .pipe(
-            catchError((error: AxiosError) => {
-              if (error.response) {
-                throw new HttpException(
-                  error.response.data,
-                  error.response.status,
-                );
-              } else {
-                throw new HttpException(
-                  'Failed to fetch user data',
-                  HttpStatus.INTERNAL_SERVER_ERROR,
-                );
-              }
-            }),
-          ),
+        this.httpService.get(`${orderServiceUrl}/orders/allShippedOrders`).pipe(
+          catchError((error: AxiosError) => {
+            if (error.response) {
+              throw new HttpException(
+                error.response.data,
+                error.response.status,
+              );
+            } else {
+              throw new HttpException(
+                'Failed to fetch user data',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }
+          }),
+        ),
       );
       return {
         messsage: 'Product deleted Successfully',
@@ -287,23 +284,21 @@ export class OrderServiceController {
 
     try {
       const result = await lastValueFrom(
-        this.httpService
-          .get(`${orderServiceUrl}/orders/allOrders`)
-          .pipe(
-            catchError((error: AxiosError) => {
-              if (error.response) {
-                throw new HttpException(
-                  error.response.data,
-                  error.response.status,
-                );
-              } else {
-                throw new HttpException(
-                  'Failed to fetch user data',
-                  HttpStatus.INTERNAL_SERVER_ERROR,
-                );
-              }
-            }),
-          ),
+        this.httpService.get(`${orderServiceUrl}/orders/allOrders`).pipe(
+          catchError((error: AxiosError) => {
+            if (error.response) {
+              throw new HttpException(
+                error.response.data,
+                error.response.status,
+              );
+            } else {
+              throw new HttpException(
+                'Failed to fetch user data',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }
+          }),
+        ),
       );
       return {
         messsage: 'Order returned Successfully',
@@ -415,9 +410,7 @@ export class OrderServiceController {
     try {
       const result = await lastValueFrom(
         this.httpService
-          .delete(
-            `${orderServiceUrl}orders/deleteOrder?orderId=${orderId}`,
-          )
+          .delete(`${orderServiceUrl}orders/deleteOrder?orderId=${orderId}`)
           .pipe(
             catchError((error: AxiosError) => {
               if (error.response) {
