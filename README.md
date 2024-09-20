@@ -36,10 +36,11 @@ To contribute to the project, you can:
 
 APIs runs at APIGate way service....
 
--  POST http://localhost:4040/api/v1/api/user/register: User Registeration
--  POST http://localhost:4040/api/v1/api/user/login: User Login
+API Documentation done with Swagger UI.
 
-Click this [link](https://documenter.getpostman.com/view/19569197/2sAXqp83kh) to get the full API Documentation 
+API hosted by Render. Find the hosted link [here](https://api-gateway-w5gn.onrender.com)
+
+Click this [link](https://api-gateway-w5gn.onrender.com/api-docs#/) to get the full API Documentation 
 ## License
 [MIT] ()
 The project is licensed under the MIT license.
