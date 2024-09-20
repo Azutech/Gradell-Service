@@ -195,7 +195,7 @@ export class OrdersService {
       .exec();
 
     if (orders.length === 0) {
-      throw new NotFoundException('No shipped orders found for this user');
+      throw new NotFoundException('No cancelled orders found for this user');
     }
 
     return {
@@ -219,7 +219,7 @@ export class OrdersService {
       throw new NotFoundException('Order not found or already deleted');
     }
 
-    return { message: 'Order successfully deleted', data: result };
+    return { message: 'All Orders retrieved successfully', data: result };
   }
 
   async update(orderId: string, updateOrderDto: UpdateOrderDto) {

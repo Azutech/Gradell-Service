@@ -48,7 +48,7 @@ export class OrdersController {
   async getOrdersByUser(@Query('userId') userId: string) {
     try {
       const orders = await this.ordersService.findOrdersByUser(userId);
-      return orders;
+      return {orders, statusCode: HttpStatus.OK, message:  "Retrieve orders for a user"}
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
@@ -72,7 +72,7 @@ export class OrdersController {
     try {
       const result = await this.ordersService.allOrder();
       return {
-        message: 'all Order  successfully',
+        message: 'All Orders retrieved successfully',
         result,
       };
     } catch (error) {
@@ -96,7 +96,7 @@ export class OrdersController {
     try {
       const result = await this.ordersService.allShippedOrder();
       return {
-        message: 'Shipped Order returned successfully',
+        message: 'All shipped orders retrieved successfully',
         result,
       };
     } catch (error) {
@@ -108,7 +108,7 @@ export class OrdersController {
     try {
       const result = await this.ordersService.allCancelledOrder();
       return {
-        message: 'Cancelled Order returned successfully',
+        message: 'All Cancelled Orders returned successfully',
         result,
       };
     } catch (error) {
@@ -132,7 +132,7 @@ export class OrdersController {
     try {
       const result = await this.ordersService.allShippedOrdersForUser(userId);
       return {
-        message: 'Cancelled Order returned successfully',
+        message: 'Shipped Order for user returned successfully',
         result,
       };
     } catch (error) {
@@ -145,7 +145,7 @@ export class OrdersController {
     try {
       const removeOrder = await this.ordersService.deleteOrder(orderId);
       return {
-        message: 'Order deleted returned successfully',
+        message: 'Order deleted successfully',
         removeOrder,
       };
     } catch (error) {

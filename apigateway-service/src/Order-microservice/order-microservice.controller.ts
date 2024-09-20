@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiBody,  ApiOperation, ApiResponse, } from '@nestjs/swagger';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
@@ -30,6 +30,11 @@ export class OrderServiceController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create an order' })
+  @ApiResponse({status: HttpStatus.CREATED, description: 'Order Created Successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Product with ID not found', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status:  HttpStatus.INTERNAL_SERVER_ERROR,description: 'Failed Request',})
   @ApiBody({ type: CreateOrderDto })
   @Post('createOrder')
   @HttpCode(HttpStatus.CREATED)
@@ -77,6 +82,10 @@ export class OrderServiceController {
   }
 
   @Get('userOrder')
+  @ApiOperation({ summary: 'Retrieve orders for a user' })
+  @ApiResponse({status: HttpStatus.OK, description: 'User Orders retrieved successfully', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status:  HttpStatus.INTERNAL_SERVER_ERROR,description: 'Failed to fetch user data',})
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req) {
@@ -103,7 +112,7 @@ export class OrderServiceController {
           ),
       );
       return {
-        messsage: 'User Orders retrieved',
+        messsage: `User's Order retrieved`,
         data: result.data,
       };
     } catch (error) {
@@ -118,6 +127,12 @@ export class OrderServiceController {
     }
   }
   @Put('cancelOrder')
+  @ApiOperation({ summary: 'Cancel an order' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Order cancelled successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Order not found', })
+  @ApiResponse({status: HttpStatus.BAD_REQUEST, description: 'Order is already cancelled', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status:  HttpStatus.INTERNAL_SERVER_ERROR,description: 'Failed to fetch user data'})
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async allProducts(@Req() req, @Query('orderId') orderId: string) {
@@ -159,6 +174,13 @@ export class OrderServiceController {
     }
   }
   @Put('shipOrder')
+  @ApiOperation({ summary: 'Mark order as shipped' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Order marked as shipped', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Order not found', })
+  @ApiResponse({status: HttpStatus.BAD_REQUEST, description: 'Order is already Shipped', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status:  HttpStatus.INTERNAL_SERVER_ERROR,description: 'Failed to fetch user data',})
+
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async updateProducts(@Query('orderId') orderId: string) {
@@ -185,7 +207,7 @@ export class OrderServiceController {
           ),
       );
       return {
-        messsage: ' Product Updated Sucessfully',
+        messsage: ' Order shipped Sucessfully',
         data: result.data,
       };
     } catch (error) {
@@ -200,9 +222,13 @@ export class OrderServiceController {
     }
   }
   @Get('allShippedOrders')
+  @ApiOperation({ summary: 'Get all shipped orders' })
+  @ApiResponse({status: HttpStatus.OK, description: 'All shipped orders retrieved successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No Shipped Orders Found', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  async deleteProduct(@Req() req) {
+  async allShippedOrders(@Req() req) {
     const orderServiceUrl = this.configService.get<string>('ORDER_SERVICE_URL');
 
     try {
@@ -239,6 +265,11 @@ export class OrderServiceController {
     }
   }
   @Get('allCancelledOrder')
+  @ApiOperation({ summary: 'Get all cancelled orders' })
+  @ApiResponse({status: HttpStatus.OK, description: 'All cancelled orders retrieved successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No cancelled Order Found', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async allCancelledOrder(@Req() req) {
@@ -265,7 +296,7 @@ export class OrderServiceController {
           ),
       );
       return {
-        messsage: 'Product deleted Successfully',
+        messsage: 'All cancelled orders retrieved successfully',
         data: result.data,
       };
     } catch (error) {
@@ -280,6 +311,11 @@ export class OrderServiceController {
     }
   }
   @Get('allOrders')
+  @ApiOperation({ summary: 'Get all  orders' })
+  @ApiResponse({status: HttpStatus.OK, description: 'All Orders retrieved successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Order not found or already deleted', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async allOrder(@Req() req) {
@@ -304,7 +340,7 @@ export class OrderServiceController {
         ),
       );
       return {
-        messsage: 'Order returned Successfully',
+        messsage: 'All Orders retrieved successfully',
         data: result.data,
       };
     } catch (error) {
@@ -319,6 +355,11 @@ export class OrderServiceController {
     }
   }
   @Get('CancelledOrderForUser')
+  @ApiOperation({ summary: 'Get all cancelled orders for user' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Cancelled Order returned successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No cancelled orders found for this user', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async CancelledOrderForUser(@Req() req) {
@@ -347,7 +388,7 @@ export class OrderServiceController {
           ),
       );
       return {
-        messsage: 'Order returned Successfully',
+        messsage: 'Cancelled Order returned Successfully',
         data: result.data,
       };
     } catch (error) {
@@ -362,6 +403,11 @@ export class OrderServiceController {
     }
   }
   @Get('ShippedOrderForUser')
+  @ApiOperation({ summary: 'Get all shipped orders for user' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Shipped Order for user returned successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No shipped orders found for this user', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async ShippedOrderForUser(@Req() req) {
@@ -405,6 +451,11 @@ export class OrderServiceController {
     }
   }
   @Delete('deleteOrder')
+  @ApiOperation({ summary: 'delete orders' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Order deleted successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Order not found or already deleted', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async deleteOrder(@Req() req, @Query('orderId') orderId: string) {
@@ -431,7 +482,7 @@ export class OrderServiceController {
           ),
       );
       return {
-        messsage: 'Product deleted Successfully',
+        messsage: 'Order deleted Successfully',
         data: result.data,
       };
     } catch (error) {
@@ -446,6 +497,12 @@ export class OrderServiceController {
     }
   }
   @Put('updateOrder')
+  @ApiOperation({ summary: 'Update orders' })
+  @ApiResponse({status: HttpStatus.OK, description: 'Order updated successfully', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Order not found', })
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: '`Product with ID  not found', })
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'No token provided, Unauthorized', })
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Failed to fetch user data', })
   @ApiBody({ type: UpdateOrderDto })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
