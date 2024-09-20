@@ -35,12 +35,12 @@ export class AuthMicroserviceController {
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'creates new user' })
-  @ApiResponse({ status: 201, description: 'User registers successfully.' }) // Success response
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'User registers successfully.' }) // Success response
   @ApiResponse({
-    status: 400,
+    status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. Validation errors or other issues.',
   })
-  @ApiResponse({ status: 409, description: 'Conflict Errors.' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Conflict Errors.' })
   async register(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
@@ -86,13 +86,13 @@ export class AuthMicroserviceController {
   @HttpCode(HttpStatus.OK)
   @ApiBody({ type: LoginUserDto })
   @ApiOperation({ summary: 'User logins successfully' })
-  @ApiResponse({ status: 200, description: 'User logins successfully.' }) // Success response
+  @ApiResponse({ status: HttpStatus.OK, description: 'User logins successfully.' }) // Success response
   @ApiResponse({
-    status: 400,
+    status: HttpStatus.BAD_REQUEST,
     description: 'Bad request, Validation errors or other issues.',
   })
-  @ApiResponse({ status: 401, description: 'Wrong Password.' })
-  @ApiResponse({ status: 404, description: 'User does not exist.' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Wrong Password.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User does not exist.' })
   async login(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
@@ -137,9 +137,9 @@ export class AuthMicroserviceController {
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Dashboard view' })
-  @ApiResponse({ status: 200, description: 'Dashboard viewed.' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Dashboard viewed.' })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized. Token missing or invalid.',
   })
   @HttpCode(HttpStatus.OK)
