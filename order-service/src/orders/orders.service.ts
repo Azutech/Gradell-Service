@@ -7,6 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './entities/order.entity';
+import { ConfigService } from '@nestjs/config';
 import { CreateOrderDto } from './dto/create-order.dto';
 import axios from 'axios';
 import { Status } from 'src/utils/type';
@@ -16,10 +17,13 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 export class OrdersService {
   constructor(
     @InjectModel(Order.name) private readonly orderModel: Model<Order>,
+    private readonly configService: ConfigService,
   ) {}
 
   // Create an order with multiple products and quantity
   async create(createOrderDto: CreateOrderDto) {
+    const productServiceUrl = this.configService.get<string>('PRODUCT_SERVICE_URL');
+
     const { userId, products, shippingAddress } = createOrderDto;
 
     const retrievedProducts = [];
@@ -27,7 +31,7 @@ export class OrdersService {
     for (const product of products) {
       try {
         const response = await axios.get(
-          `http://localhost:4042/api/v1/products/product?id=${product.productId}`,
+          `${productServiceUrl}/products/product?id=${product.productId}`,
         );
         const retrievedProduct = response.data;
 
@@ -63,11 +67,13 @@ export class OrdersService {
   }
 
   async getUser(userId: string) {
+    const userServiceUrl = this.configService.get<string>('USER_SERVICE_URL');
+
     let retrievedUser;
 
     try {
       const response = await axios.get(
-        `http://localhost:4041/api/v1/auth?id=${userId}`,
+        `${userServiceUrl}/auth?id=${userId}`,
       );
       retrievedUser = response.data;
 

@@ -23,6 +23,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth() // If you're using JWT
     .setExternalDoc('Deployed Swagger JSON', `${swaggerBaseUrl}/api-json`)
+    // .addServer('https://api-gateway-w5gn.onrender.com', 'Production Server') // Add your deployed link here
 
     .build();
 
