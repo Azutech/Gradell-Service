@@ -14,7 +14,16 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { CreateUserDto, LoginUserDto } from './dto/createUser'; // Assuming you have DTOs
 
+@ApiTags('Auth')
 @Controller('user')
 export class AuthMicroserviceController {
   constructor(
@@ -24,6 +33,14 @@ export class AuthMicroserviceController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
+  @ApiBody({ type: CreateUserDto })
+  @ApiOperation({ summary: 'creates new user' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'User registers successfully.' }) // Success response
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request. Validation errors or other issues.',
+  })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Conflict Errors.' })
   async register(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
@@ -67,6 +84,15 @@ export class AuthMicroserviceController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginUserDto })
+  @ApiOperation({ summary: 'User logins successfully' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User logins successfully.' }) // Success response
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request, Validation errors or other issues.',
+  })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Wrong Password.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User does not exist.' })
   async login(@Body() createUserDto: any) {
     const authServiceUrl = this.configService.get<string>('USER_SERVICE_URL'); // Get the base URL from ConfigService
 
@@ -109,6 +135,13 @@ export class AuthMicroserviceController {
   }
 
   @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Dashboard view' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Dashboard viewed.' })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized. Token missing or invalid.',
+  })
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async dashboard(@Req() req) {

@@ -39,7 +39,7 @@ export class UsersService {
     });
 
     if (!createdUser) {
-      throw new HttpException("Products can not created", HttpStatus.BAD_REQUEST)
+      throw new HttpException("Users can not created", HttpStatus.BAD_REQUEST)
     }
     return createdUser.save();
   }
